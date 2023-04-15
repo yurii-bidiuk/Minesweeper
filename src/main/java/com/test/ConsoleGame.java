@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class ConsoleGame extends Game {
 
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     public ConsoleGame(BoardGenerator boardGenerator, ActionHandler actionHandler) {
         super(boardGenerator, actionHandler, new ConsoleBoardPrinter());

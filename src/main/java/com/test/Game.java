@@ -9,9 +9,10 @@ import com.test.exception.GameOverException;
 import com.test.exception.InvalidIndexException;
 
 public abstract class Game {
-    private BoardGenerator boardGenerator;
-    private ActionHandler actionHandler;
-    public BoardPrinter boardPrinter;
+    private final BoardGenerator boardGenerator;
+    private final ActionHandler actionHandler;
+    private final BoardPrinter boardPrinter;
+    private Board board;
 
     protected Game(BoardGenerator boardGenerator, ActionHandler actionHandler, BoardPrinter boardPrinter) {
         this.boardGenerator = boardGenerator;
@@ -19,24 +20,30 @@ public abstract class Game {
         this.boardPrinter = boardPrinter;
     }
 
-    private Board board;
-
     public void start() {
+        // Get the number of rows, columns, and black holes count from user input
         int rows = getRowsCount();
         int columns = getColumnsCount();
         int blackHolesCount = getBlackHolesCount();
+
+        // Initialize the game with the given parameters
         initGame(rows, columns, blackHolesCount);
 
         try {
             while (true) {
                 try {
+                    // Receive input from the user
                     input();
+                    // Print the current state of the game board after each change
                     boardPrinter.printState(board);
                 } catch (InvalidIndexException exception) {
+                    // If the user's input is invalid, print an error message
                     printMessage(exception.getMessage());
                 }
             }
+            // If the game is over, catch the GameOverException
         } catch (GameOverException e) {
+            // Print the game over message
             boardPrinter.printGameOver(board);
         }
     }

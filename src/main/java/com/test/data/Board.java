@@ -3,7 +3,6 @@ package com.test.data;
 public class Board {
     private final Cell[][] cells;
     private final int blackHolesCount;
-
     private int[][] blackHolesLocation;
 
     public Board(int rows, int columns, int blackHolesCount) {
