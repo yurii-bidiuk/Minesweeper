@@ -9,6 +9,7 @@ import com.test.exception.GameOverException;
 import com.test.exception.InvalidIndexException;
 
 public abstract class Game {
+
     private final BoardGenerator boardGenerator;
     private final ActionHandler actionHandler;
     private final BoardPrinter boardPrinter;
@@ -30,21 +31,11 @@ public abstract class Game {
         initGame(rows, columns, blackHolesCount);
 
         try {
-            while (true) {
-                try {
-                    // Receive input from the user
-                    input();
-                    // Print the current state of the game board after each change
-                    boardPrinter.printState(board);
-                } catch (InvalidIndexException exception) {
-                    // If the user's input is invalid, print an error message
-                    printMessage(exception.getMessage());
-                }
+            while (!isAllCellsOpened()) {
+                playTurn();
             }
-            // If the game is over, catch the GameOverException
         } catch (GameOverException e) {
-            // Print the game over message
-            boardPrinter.printGameOver(board);
+            handleGameOver();
         }
     }
 
@@ -53,18 +44,47 @@ public abstract class Game {
         boardPrinter.printState(board);
     }
 
-    private void input() throws GameOverException, InvalidIndexException {
+    private void playTurn() throws GameOverException {
+        try {
+            handleUserInput();
+            if (isAllCellsOpened()) {
+                handleGameOver();
+            } else {
+                boardPrinter.printState(board);
+            }
+        } catch (InvalidIndexException exception) {
+            displayMessage(exception.getMessage());
+        }
+    }
+
+    private void handleUserInput() throws GameOverException, InvalidIndexException {
         int clickedRowIndex = getRowIndex();
         int clickedColumnIndex = getColumnIndex();
-        actionHandler.handleCellClick(clickedRowIndex, clickedColumnIndex, board.getCells());
+        actionHandler.handleCellClick(clickedRowIndex, clickedColumnIndex, board);
+    }
+
+    private boolean isAllCellsOpened() {
+        int totalCellsCount = (board.getRows() * board.getColumns()) - board.getBlackHolesCount();
+        return totalCellsCount == board.getOpenedCells();
+    }
+
+    private void handleGameOver() {
+        boardPrinter.printGameOver(board);
+        if (isAllCellsOpened()) {
+            displayMessage("You won!");
+        }
     }
 
     protected abstract int getRowsCount();
+
     protected abstract int getColumnsCount();
+
     protected abstract int getBlackHolesCount();
 
     protected abstract int getRowIndex();
+
     protected abstract int getColumnIndex();
-    protected abstract void printMessage(String message);
+
+    protected abstract void displayMessage(String message);
 
 }

@@ -1,6 +1,7 @@
 package com.test.component.impl;
 
 import com.test.component.ActionHandler;
+import com.test.data.Board;
 import com.test.data.Cell;
 import com.test.exception.GameOverException;
 import com.test.exception.InvalidIndexException;
@@ -22,7 +23,8 @@ public class ActionHandlerImpl implements ActionHandler {
     );
 
     @Override
-    public void handleCellClick(int row, int col, Cell[][] cells) throws GameOverException, InvalidIndexException {
+    public void handleCellClick(int row, int col, Board board) throws GameOverException, InvalidIndexException {
+        Cell[][] cells = board.getCells();
         if (!isValidIndex(row, col, cells)) {
             throw new InvalidIndexException();
         }
@@ -32,12 +34,14 @@ public class ActionHandlerImpl implements ActionHandler {
 
         if (cells[row][col].getValue() > 0) {
             cells[row][col].setOpen(true);
+            incrementOpenedCellsCount(board);
             return;
         }
-        openAdjacentCells(row, col, cells);
+        openAdjacentCells(row, col, board);
     }
 
-    private void openAdjacentCells(int row, int col, Cell[][] cells) {
+    private void openAdjacentCells(int row, int col, Board board) {
+        Cell[][] cells = board.getCells();
         // Check if the given row and column indices are valid
         if (!isValidIndex(row, col, cells)) {
             return;
@@ -47,16 +51,21 @@ public class ActionHandlerImpl implements ActionHandler {
         }
         // Set the current cell as open
         cells[row][col].setOpen(true);
+        incrementOpenedCellsCount(board);
         // Check if the current cell has a value of zero
         if (cells[row][col].getValue() == 0) {
             // If current cell is 0, go through the neighbor cells using directions from NEIGHBORS_ROUTES
             for (int[] neighbor : NEIGHBORS_DIRECTIONS) {
                 // Calculate the row and column indices of the neighbor cell
-                int r = row + neighbor[0];
-                int c = col + neighbor[1];
-                openAdjacentCells(r, c, cells);
+                int nextRow = row + neighbor[0];
+                int nextColumn = col + neighbor[1];
+                openAdjacentCells(nextRow, nextColumn, board);
             }
         }
+    }
+
+    private void incrementOpenedCellsCount(Board board) {
+        board.setOpenedCells(board.getOpenedCells() + 1);
     }
 
     private boolean isValidIndex(int row, int col, Cell[][] cells) {

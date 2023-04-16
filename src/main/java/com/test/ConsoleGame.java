@@ -44,7 +44,7 @@ public class ConsoleGame extends Game {
     }
 
     @Override
-    protected void printMessage(String message) {
+    protected void displayMessage(String message) {
         System.out.println(message);
     }
 }

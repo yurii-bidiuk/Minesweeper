@@ -3,7 +3,8 @@ package com.test.component.impl;
 import com.test.component.CellInitializer;
 import com.test.data.Cell;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
 
 public class CellInitializerImpl implements CellInitializer {
     @Override

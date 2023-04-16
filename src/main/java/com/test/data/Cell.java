@@ -1,6 +1,7 @@
 package com.test.data;
 
 public class Cell {
+
     private boolean isOpen;
     private boolean isBlackHole;
     private int value;
